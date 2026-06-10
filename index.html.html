@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoTrace — Know Your Carbon Footprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────────── */
+    :root {
+      --forest:   #0D2B4E;
+      --leaf:     #1565A8;
+      --moss:     #2196D4;
+      --sage:     #A8D4F5;
+      --mist:     #E8F3FB;
+
+      --sky:      #1B6CA8;
+      --sun:      #D4860A;
+      --clay:     #C0583A;
+      --lavender: #6B5FBF;
+
+      --ink:      #0D1C2E;
+      --charcoal: #1E3248;
+      --slate:    #4A6080;
+      --stone:    #7A9BB8;
+      --fog:      #C4D8EC;
+      --snow:     #F0F6FB;
+      --white:    #FFFFFF;
+
+      --dgreen:   #1A4731;
+      --dleaf:    #2D7A4F;
+
+      --ff-display: 'DM Serif Display', Georgia, serif;
+      --ff-body:    'DM Sans', system-ui, sans-serif;
+
+      --radius-sm:  6px;
+      --radius-md:  10px;
+      --radius-lg:  16px;
+      --radius-xl:  24px;
+
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+      --shadow-lift: 0 4px 24px rgba(0,0,0,.10);
+    }
+
+    /* ── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-body);
+      background: var(--snow);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+    input[type=range] { cursor: pointer; }
+
+    /* ── NAV ────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(240,246,251,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--fog);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--forest);
+      letter-spacing: -.4px;
+      text-decoration: none;
+    }
+    .nav-logo span {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--leaf) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    body.dark .nav-logo span {
+      background: linear-gradient(135deg, var(--sage) 0%, var(--moss) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      font-size: 14px;
+      color: var(--slate);
+    }
+    .nav-links a:hover { color: var(--leaf); }
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 16px;
+      background: var(--leaf);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      transition: background .15s;
+    }
+    .nav-cta:hover { background: var(--forest); }
+
+    /* ── HERO ───────────────────────────────────────────────────── */
+    .hero {
+      background: var(--forest);
+      color: white;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-circle(circle at 20% 80%, rgba(77,175,125,.18) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(168,213,181,.12) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 1.25rem;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--sage);
+      opacity: .6;
+    }
+    .hero h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 1rem;
+      color: white;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--sage);
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: rgba(255,255,255,.65);
+      max-width: 520px;
+      margin: 0 auto 2rem;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-val {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      color: var(--sage);
+      display: block;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-stat-label {
+      font-size: 12px;
+      color: rgba(255,255,255,.5);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── PAGE LAYOUT ────────────────────────────────────────────── */
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+    .section-gap { margin-bottom: 2.5rem; }
+
+    /* ── TABS ───────────────────────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--fog);
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 20px;
+      color: var(--slate);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color .15s, border-color .15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn.active {
+      color: var(--leaf);
+      border-bottom-color: var(--leaf);
+    }
+    .tab-btn i { font-size: 16px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── SUMMARY CARDS ──────────────────────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .summary-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.125rem 1rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--fog);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .summary-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+    .summary-card.accent {
+      background: var(--forest);
+      border-color: var(--forest);
+      color: white;
+    }
+    .summary-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--stone);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .summary-card.accent .summary-label { color: var(--sage); }
+    .summary-value {
+      font-family: var(--ff-display);
+      font-size: 1.75rem;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .summary-card.accent .summary-value { color: white; }
+    .summary-sub {
+      font-size: 12px;
+      color: var(--stone);
+    }
+    .summary-card.accent .summary-sub { color: rgba(255,255,255,.55); }
+    .rating-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .rating-green  { background: #D4EAF5; color: #0D2B4E; }
+    .rating-amber  { background: #FEF0D4; color: #7A4A00; }
+    .rating-red    { background: #FADDDA; color: #8B2018; }
+
+    /* ── INPUT CARDS ────────────────────────────────────────────── */
+    .input-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--fog);
+      margin-bottom: 1.25rem;
+    }
+    .input-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid var(--mist);
+    }
+    .input-card-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .icon-transport { background: #DCEEFB; color: #1B6CA8; }
+    .icon-home      { background: #FEF0D4; color: #D4860A; }
+    .icon-diet      { background: #D4EAF5; color: #0D2B4E; }
+    .input-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .input-card-subtitle {
+      font-size: 12px;
+      color: var(--slate);
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 8px 0;
+    }
+    .slider-row + .slider-row {
+      border-top: 1px solid var(--mist);
+    }
+    .slider-label {
+      font-size: 14px;
+      color: var(--charcoal);
+      flex: 1;
+      min-width: 0;
+    }
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 140px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--fog);
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--leaf);
+      border: 2px solid white;
+      box-shadow: 0 0 0 1px var(--leaf);
+      cursor: pointer;
+      transition: transform .1s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--leaf);
+      border: 2px solid white;
+      cursor: pointer;
+    }
+    .slider-val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      min-width: 76px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ── BREAKDOWN ──────────────────────────────────────────────── */
+    .breakdown-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--fog);
+      margin-bottom: 1.25rem;
+    }
+    .breakdown-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bar-row { margin-bottom: 14px; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+    .bar-meta strong { color: var(--ink); font-weight: 500; }
+    .bar-track {
+      height: 9px;
+      background: var(--mist);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── ACTIONS ────────────────────────────────────────────────── */
+    .actions-intro {
+      font-size: 14px;
+      color: var(--slate);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+      padding: 1rem 1.25rem;
+      background: var(--mist);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--moss);
+    }
+    .action-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--fog);
+      margin-bottom: .875rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .action-card:hover { border-color: var(--sage); box-shadow: var(--shadow-lift); }
+    .action-card.completed {
+      border-color: var(--moss);
+      background: #F6FBF8;
+    }
+    .action-check {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--fog);
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      transition: all .2s;
+      font-size: 13px;
+      color: transparent;
+    }
+    .action-card.completed .action-check {
+      background: var(--leaf);
+      border-color: var(--leaf);
+      color: white;
+    }
+    .action-body { flex: 1; min-width: 0; }
+    .action-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+    .action-card.completed .action-name {
+      color: var(--slate);
+      text-decoration: line-through;
+      text-decoration-color: var(--moss);
+    }
+    .action-desc {
+      font-size: 13px;
+      color: var(--slate);
+      line-height: 1.55;
+      margin-bottom: 6px;
+    }
+    .action-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #0D2B4E;
+      background: #A8D4F5;
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+    .savings-summary {
+      background: var(--forest);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .savings-block .label { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--sage); margin-bottom: 4px; }
+    .savings-block .val  { font-family: var(--ff-display); font-size: 1.6rem; color: white; }
+
+    /* ── INSIGHTS ───────────────────────────────────────────────── */
+    .insight-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.125rem 1.25rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--fog);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: .875rem;
+    }
+    .insight-icon {
+      width: 34px; height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--mist);
+      color: var(--leaf);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .insight-text { font-size: 14px; color: var(--charcoal); line-height: 1.65; }
+    .insight-text strong { color: var(--forest); }
+    .compare-section {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--fog);
+      margin-top: 1.5rem;
+    }
+    .compare-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+    .compare-row { margin-bottom: 14px; }
+    .compare-row:last-child { margin-bottom: 0; }
+    .compare-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+    .compare-meta .you-label { font-weight: 600; color: var(--leaf); }
+    .compare-track {
+      height: 10px;
+      background: var(--mist);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .compare-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+    .cta-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 500;
+      color: white;
+      background: var(--leaf);
+      border: none;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background .15s, transform .1s;
+    }
+    .cta-btn:hover { background: var(--forest); transform: translateY(-1px); }
+    .cta-btn:active { transform: translateY(0); }
+
+    /* ── START TRACKING SECTION ─────────────────────────────────── */
+    .start-section {
+      background: var(--snow);
+      padding: 3rem 1.5rem;
+      border-bottom: 1px solid var(--fog);
+    }
+    .start-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .start-heading {
+      font-family: var(--ff-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--forest);
+      margin-bottom: .5rem;
+      letter-spacing: -.01em;
+    }
+    body.dark .start-heading { color: var(--sage); }
+    .start-sub {
+      font-size: 15px;
+      color: var(--slate);
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+    .start-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .start-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--white);
+      border: 1.5px solid var(--fog);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      font-family: var(--ff-body);
+      text-align: left;
+      transition: border-color .2s, box-shadow .2s, transform .15s, background .2s;
+      min-width: 210px;
+      flex: 1;
+      max-width: 240px;
+      color: var(--ink);
+    }
+    .start-btn:hover {
+      border-color: var(--moss);
+      box-shadow: var(--shadow-lift);
+      transform: translateY(-2px);
+    }
+    .start-btn-active {
+      background: var(--leaf);
+      border-color: var(--leaf);
+      color: white;
+    }
+    .start-btn-active:hover {
+      background: var(--forest);
+      border-color: var(--forest);
+    }
+    .start-btn > .ti:first-child {
+      font-size: 22px;
+      color: var(--leaf);
+      flex-shrink: 0;
+    }
+    .start-btn-active > .ti:first-child { color: rgba(255,255,255,.85); }
+    .start-btn span {
+      flex: 1;
+    }
+    .start-btn strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .start-btn small {
+      display: block;
+      font-size: 12px;
+      color: var(--slate);
+      font-weight: 400;
+    }
+    .start-btn-active small { color: rgba(255,255,255,.7); }
+    .start-btn-arrow {
+      font-size: 16px;
+      color: var(--stone);
+      flex-shrink: 0;
+      transition: transform .2s;
+    }
+    .start-btn:hover .start-btn-arrow { transform: translateX(3px); }
+    .start-btn-active .start-btn-arrow { color: rgba(255,255,255,.5); }
+    body.dark .start-section { background: #0D1C2E; border-bottom-color: #1E3250; }
+    body.dark .start-btn {
+      background: #122038;
+      border-color: #1E3250;
+      color: #E0EEFA;
+    }
+    body.dark .start-btn small { color: var(--slate); }
+    body.dark .start-btn:hover { border-color: var(--moss); box-shadow: var(--shadow-lift); }
+    body.dark .start-btn-active {
+      background: var(--leaf);
+      border-color: var(--moss);
+      color: white;
+    }
+    body.dark .start-btn-active small { color: rgba(255,255,255,.7); }
+    body.dark .start-btn-active > .ti:first-child { color: rgba(255,255,255,.85); }
+
+    /* ── CARBON INFO SECTION ────────────────────────────────────── */
+    .carbon-info {
+      margin-top: 2.5rem;
+      text-align: left;
+    }
+    .carbon-info-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--slate);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .carbon-info-title .ti { color: var(--leaf); font-size: 15px; }
+    .carbon-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 700px) {
+      .carbon-info-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .carbon-info-grid { grid-template-columns: 1fr; }
+    }
+    .carbon-info-card {
+      background: var(--white);
+      border: 1px solid var(--fog);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.125rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .carbon-info-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+    .carbon-info-icon {
+      width: 34px; height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .carbon-info-body strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .carbon-info-body p {
+      font-size: 12px;
+      color: var(--slate);
+      line-height: 1.6;
+      margin: 0;
+    }
+    body.dark .carbon-info-card {
+      background: #122038;
+      border-color: #1E3250;
+    }
+    body.dark .carbon-info-body strong { color: #E0EEFA; }
+    body.dark .carbon-info-body p { color: var(--slate); }
+    body.dark .carbon-info-icon[style*="background:#DCEEFB"] { background: #0D2035 !important; }
+    body.dark .carbon-info-icon[style*="background:#FEF0D4"] { background: #2A1800 !important; }
+    body.dark .carbon-info-icon[style*="background:#D4EAF5"] { background: #0D2035 !important; }
+    body.dark .carbon-info-icon[style*="background:#EDE8FB"] { background: #1A1530 !important; }
+    body.dark .carbon-info-icon[style*="background:#E8F3FB"] { background: #0D2035 !important; }
+    body.dark .carbon-info-icon[style*="background:#FADDDA"] { background: #2A0D0A !important; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--forest);
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 13px;
+    }
+    footer strong { color: var(--sage); }
+
+    /* ── CREATOR CARD ───────────────────────────────────────────── */
+    .creator-card {
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, #0D2B4E 0%, #1A4731 100%);
+      border-radius: var(--radius-lg);
+      padding: 1.375rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-lift);
+    }
+    .creator-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--moss);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-display);
+      font-size: 1.25rem;
+      color: white;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,.2);
+      letter-spacing: -.5px;
+    }
+    .creator-info { flex: 1; min-width: 0; }
+    .creator-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--sage);
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+    .creator-name {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      color: white;
+      line-height: 1.2;
+    }
+    .creator-tagline {
+      font-size: 12px;
+      color: rgba(255,255,255,.5);
+      margin-top: 2px;
+    }
+    .creator-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--forest);
+      background: var(--sage);
+      padding: 5px 12px;
+      border-radius: 99px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── HELP MODAL ─────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17,28,24,.55);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.18);
+      overflow: hidden;
+      animation: modalIn .2s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+      background: var(--forest);
+      padding: 1.5rem 1.5rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .modal-header-text {}
+    .modal-header-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--sage);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .modal-header-title {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      color: white;
+      line-height: 1.2;
+    }
+    .modal-header-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.55);
+      margin-top: 4px;
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      border: none;
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,.22); }
+    .modal-body { padding: 1.5rem; }
+    .faq-item {
+      border-bottom: 1px solid var(--mist);
+      padding: 0.875rem 0;
+      cursor: pointer;
+    }
+    .faq-item:last-of-type { border-bottom: none; }
+    .faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .faq-q i { color: var(--stone); font-size: 16px; transition: transform .2s; }
+    .faq-item.open .faq-q i { transform: rotate(180deg); color: var(--leaf); }
+    .faq-a {
+      font-size: 13px;
+      color: var(--slate);
+      line-height: 1.65;
+      margin-top: 8px;
+      display: none;
+    }
+    .faq-item.open .faq-a { display: block; }
+    .modal-divider {
+      height: 1px;
+      background: var(--mist);
+      margin: 1.25rem 0;
+    }
+    .contact-form-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .contact-form-title i { color: var(--leaf); }
+    .form-group { margin-bottom: 1rem; }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: var(--ff-body);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--snow);
+      border: 1px solid var(--fog);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--leaf);
+      box-shadow: 0 0 0 3px rgba(21,101,168,.15);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: white;
+      background: var(--leaf);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background .15s, transform .1s;
+      margin-top: 1.25rem;
+    }
+    .submit-btn:hover { background: var(--forest); transform: translateY(-1px); }
+    .submit-btn:active { transform: translateY(0); }
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .form-success .success-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--mist);
+      color: var(--leaf);
+      font-size: 26px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .form-success h3 {
+      font-family: var(--ff-display);
+      font-size: 1.25rem;
+      color: var(--forest);
+      margin-bottom: 6px;
+    }
+    .form-success p { font-size: 14px; color: var(--slate); }
+
+    /* ── FLOATING HELP BUTTON ───────────────────────────────────── */
+    .help-fab {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 150;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--leaf);
+      color: white;
+      border: none;
+      font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(21,101,168,.4);
+      cursor: pointer;
+      transition: background .15s, transform .15s, box-shadow .15s;
+    }
+    .help-fab:hover {
+      background: var(--forest);
+      transform: scale(1.08);
+      box-shadow: 0 6px 28px rgba(21,101,168,.5);
+    }
+    .help-fab-label {
+      position: fixed;
+      bottom: 1.625rem;
+      right: 4.5rem;
+      z-index: 150;
+      font-size: 13px;
+      font-weight: 500;
+      color: white;
+      background: var(--forest);
+      padding: 6px 12px;
+      border-radius: 99px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(6px);
+      transition: opacity .2s, transform .2s;
+      white-space: nowrap;
+    }
+    .help-fab:hover + .help-fab-label { opacity: 1; transform: translateX(0); }
+
+    /* ── DARK MODE ──────────────────────────────────────────────── */
+    body.dark {
+      --ink:      #E0EEFA;
+      --charcoal: #C0D4E8;
+      --slate:    #8AAAC8;
+      --stone:    #5A7A98;
+      --fog:      #1E3250;
+      --mist:     #142540;
+      --snow:     #0D1C2E;
+      --white:    #122038;
+    }
+    body.dark {
+      background: #0D1C2E;
+      color: #E0EEFA;
+    }
+    body.dark nav {
+      background: rgba(13,28,46,.94);
+      border-bottom-color: #1E3250;
+    }
+    body.dark .nav-logo { color: var(--sage); }
+    body.dark .summary-card {
+      background: #122038;
+      border-color: #1E3250;
+    }
+    body.dark .summary-value { color: #E0EEFA; }
+    body.dark .input-card,
+    body.dark .breakdown-card,
+    body.dark .action-card,
+    body.dark .insight-card,
+    body.dark .compare-section {
+      background: #122038;
+      border-color: #1E3250;
+    }
+    body.dark .action-card.completed {
+      background: #0D2040;
+      border-color: var(--moss);
+    }
+    body.dark .action-check {
+      background: #122038;
+      border-color: #2A4060;
+    }
+    body.dark .actions-intro {
+      background: #0D2040;
+      color: var(--slate);
+    }
+    body.dark .modal {
+      background: #122038;
+    }
+    body.dark .faq-item {
+      border-bottom-color: #1E3250;
+    }
+    body.dark .modal-divider {
+      background: #1E3250;
+    }
+    body.dark .form-input,
+    body.dark .form-select,
+    body.dark .form-textarea {
+      background: #0D1C2E;
+      border-color: #1E3250;
+      color: #E0EEFA;
+    }
+    body.dark .form-input::placeholder,
+    body.dark .form-textarea::placeholder {
+      color: #4A6080;
+    }
+    body.dark .form-select option {
+      background: #122038;
+      color: #E0EEFA;
+    }
+    body.dark .bar-track,
+    body.dark .compare-track {
+      background: #1E3250;
+    }
+    body.dark .rating-green { background: #0D2838; color: #60C8F0; }
+    body.dark .rating-amber { background: #2E2010; color: #F0B54A; }
+    body.dark .rating-red   { background: #2E1210; color: #F07A6A; }
+    body.dark .action-badge { background: #0D2838; color: #60C8F0; }
+    body.dark .icon-transport { background: #0D2035; color: #60B0F0; }
+    body.dark .icon-home      { background: #2A1800; color: #F0B54A; }
+    body.dark .icon-diet      { background: #0D2838; color: #60C8F0; }
+    body.dark .insight-icon   { background: #142540; }
+    body.dark input[type=range] { background: #1E3250; }
+    body.dark .form-success h3 { color: var(--sage); }
+    body.dark .tab-nav { border-bottom-color: #1E3250; }
+    body.dark .tab-btn { color: var(--slate); }
+    body.dark .tab-btn:hover { color: #E0EEFA; }
+
+    /* ── DARK MODE TOGGLE ───────────────────────────────────────── */
+    .theme-toggle {
+      width: 44px; height: 26px;
+      border-radius: 99px;
+      background: var(--fog);
+      border: 1.5px solid var(--stone);
+      position: relative;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 3px;
+    }
+    .theme-toggle::after {
+      content: '';
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--slate);
+      transition: transform .22s cubic-bezier(.4,0,.2,1), background .2s;
+      display: block;
+    }
+    body.dark .theme-toggle {
+      background: var(--leaf);
+      border-color: var(--moss);
+    }
+    body.dark .theme-toggle::after {
+      transform: translateX(18px);
+      background: white;
+    }
+    .theme-toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--slate);
+      margin-right: 8px;
+    }
+    .theme-toggle-wrap .ti {
+      font-size: 15px;
+      color: var(--stone);
+      transition: color .2s;
+    }
+    body.dark .theme-toggle-wrap .ti { color: var(--sage); }
+
+    /* ── HERO HEADLINE + EARTH ──────────────────────────────────── */
+    .hero-headline-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .hero-headline-wrap h1 {
+      margin-bottom: 0;
+    }
+    .earth-3d-wrap {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #earthCanvas {
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 2px rgba(168,213,245,.18),
+        0 0 32px rgba(33,150,212,.35),
+        0 0 60px rgba(13,43,78,.55);
+      display: block;
+    }
+    @media (max-width: 640px) {
+      .hero-headline-wrap { gap: 16px; }
+      #earthCanvas { width: 110px; height: 110px; }
+    }
+
+    
+    .hidden { display: none !important; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    @media (max-width: 640px) {
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { gap: 1.5rem; }
+      input[type=range] { width: 110px; }
+      .slider-val { min-width: 60px; font-size: 12px; }
+      .nav-links { display: none; }
+      .savings-summary { flex-direction: column; gap: .5rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Outer ring: deep blue -->
+        <circle cx="17" cy="17" r="16" fill="#0D2B4E" stroke="#1565A8" stroke-width="1.5"/>
+        <!-- Globe grid lines -->
+        <ellipse cx="17" cy="17" rx="7" ry="12" stroke="#2196D4" stroke-width="1" fill="none" opacity="0.5"/>
+        <line x1="5" y1="17" x2="29" y2="17" stroke="#2196D4" stroke-width="1" opacity="0.4"/>
+        <path d="M8 11 Q17 14 26 11" stroke="#2196D4" stroke-width="0.8" fill="none" opacity="0.35"/>
+        <path d="M8 23 Q17 20 26 23" stroke="#2196D4" stroke-width="0.8" fill="none" opacity="0.35"/>
+        <!-- Leaf shape: dark green accent -->
+        <path d="M17 8 C20 10 24 13 22 18 C20 22 17 23 17 23 C17 23 14 22 12 18 C10 13 14 10 17 8Z" fill="#1A4731" stroke="#2D7A4F" stroke-width="1"/>
+        <!-- Leaf vein -->
+        <line x1="17" y1="9" x2="17" y2="22" stroke="#4CAF7D" stroke-width="0.8" opacity="0.7"/>
+        <line x1="17" y1="14" x2="20" y2="12" stroke="#4CAF7D" stroke-width="0.6" opacity="0.6"/>
+        <line x1="17" y1="17" x2="20.5" y2="15.5" stroke="#4CAF7D" stroke-width="0.6" opacity="0.5"/>
+        <line x1="17" y1="14" x2="14" y2="12" stroke="#4CAF7D" stroke-width="0.6" opacity="0.6"/>
+        <line x1="17" y1="17" x2="13.5" y2="15.5" stroke="#4CAF7D" stroke-width="0.6" opacity="0.5"/>
+        <!-- CO2 text hint: small dot trail -->
+        <circle cx="24" cy="10" r="1.5" fill="#2196D4" opacity="0.7"/>
+        <circle cx="27" cy="8" r="1" fill="#2196D4" opacity="0.5"/>
+        <circle cx="29" cy="7" r="0.7" fill="#2196D4" opacity="0.3"/>
+      </svg>
+      <span>EcoTrace</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="#" onclick="openHelp();return false;" style="font-size:13px;font-weight:500;color:var(--leaf);display:flex;align-items:center;gap:4px;"><i class="ti ti-help-circle" style="font-size:15px" aria-hidden="true"></i>Help</a>
+      <div class="theme-toggle-wrap" title="Toggle dark mode">
+        <i class="ti ti-sun"></i>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" onclick="toggleTheme()"></button>
+        <i class="ti ti-moon"></i>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h2 class="sr-only">EcoTrace — Personal carbon footprint calculator and reduction guide</h2>
+    <div class="hero-eyebrow">Climate action starts here</div>
+
+    <!-- Hero headline + 3D Earth side by side -->
+    <div class="hero-headline-wrap">
+      <h1>Your choices shape<br /><em>the planet's future</em></h1>
+      <div class="earth-3d-wrap" aria-hidden="true">
+        <canvas id="earthCanvas" width="160" height="160"></canvas>
+      </div>
+    </div>
+
+    <p class="hero-sub">Understand where your carbon comes from, see what it costs the climate, and discover the actions that matter most — personalised to your lifestyle.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-val">4.7 t</span>
+        <span class="hero-stat-label">World avg / person</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">2.0 t</span>
+        <span class="hero-stat-label">1.5 °C target</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">37 Gt</span>
+        <span class="hero-stat-label">Global CO₂ in 2024</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">~60%</span>
+        <span class="hero-stat-label">Driven by individuals</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- START TRACKING CTA SECTION -->
+  <section class="start-section">
+    <div class="start-inner">
+      <div class="start-heading">Ready to take action?</div>
+      <p class="start-sub">Choose where you'd like to begin — calculate your footprint, explore reductions, or dive into insights.</p>
+      <div class="start-buttons">
+        <button id="sbtn-estimate" class="start-btn start-btn-active" onclick="startTracking('estimate')" data-tab="estimate">
+          <i class="ti ti-calculator"></i>
+          <span>
+            <strong>My Footprint</strong>
+            <small>Calculate your CO₂ emissions</small>
+          </span>
+          <i class="ti ti-arrow-right start-btn-arrow"></i>
+        </button>
+        <button id="sbtn-actions" class="start-btn" onclick="startTracking('actions')" data-tab="actions">
+          <i class="ti ti-list-check"></i>
+          <span>
+            <strong>Reduce It</strong>
+            <small>Actions to lower your impact</small>
+          </span>
+          <i class="ti ti-arrow-right start-btn-arrow"></i>
+        </button>
+        <button id="sbtn-insights" class="start-btn" onclick="startTracking('insights')" data-tab="insights">
+          <i class="ti ti-chart-dots"></i>
+          <span>
+            <strong>Insights</strong>
+            <small>See how you compare</small>
+          </span>
+          <i class="ti ti-arrow-right start-btn-arrow"></i>
+        </button>
+      </div>
+
+      <!-- Carbon info section -->
+      <div class="carbon-info">
+        <div class="carbon-info-title"><i class="ti ti-info-circle"></i> About Carbon Footprints</div>
+        <div class="carbon-info-grid">
+          <div class="carbon-info-card">
+            <div class="carbon-info-icon" style="background:#DCEEFB;color:#1B6CA8"><i class="ti ti-car"></i></div>
+            <div class="carbon-info-body">
+              <strong>Transport</strong>
+              <p>A single long-haul flight emits more CO₂ per passenger than driving for an entire month. Cars burning petrol release ~2.3 kg CO₂ per litre of fuel.</p>
+            </div>
+          </div>
+          <div class="carbon-info-card">
+            <div class="carbon-info-icon" style="background:#FEF0D4;color:#D4860A"><i class="ti ti-home"></i></div>
+            <div class="carbon-info-body">
+              <strong>Home Energy</strong>
+              <p>Heating and electricity account for ~25% of household emissions. Switching to renewables or improving insulation can cut this by half.</p>
+            </div>
+          </div>
+          <div class="carbon-info-card">
+            <div class="carbon-info-icon" style="background:#D4EAF5;color:#0D2B4E"><i class="ti ti-salad"></i></div>
+            <div class="carbon-info-body">
+              <strong>Food &amp; Diet</strong>
+              <p>Beef production emits 60 kg CO₂ per kg of meat — 20× more than plant protein. Even two meat-free days a week saves ~0.5 t CO₂ per year.</p>
+            </div>
+          </div>
+          <div class="carbon-info-card">
+            <div class="carbon-info-icon" style="background:#EDE8FB;color:#6B5FBF"><i class="ti ti-shopping-bag"></i></div>
+            <div class="carbon-info-body">
+              <strong>Stuff &amp; Shopping</strong>
+              <p>Manufacturing a single smartphone emits ~70 kg CO₂. Fast fashion produces 10% of global emissions — more than aviation and shipping combined.</p>
+            </div>
+          </div>
+          <div class="carbon-info-card">
+            <div class="carbon-info-icon" style="background:#E8F3FB;color:#1565A8"><i class="ti ti-world"></i></div>
+            <div class="carbon-info-body">
+              <strong>Global Context</strong>
+              <p>Global CO₂ hit 37 Gt in 2024. To reach 1.5 °C safety, every person needs to reach 2 t/yr by 2050 — down from today's 4.7 t average.</p>
+            </div>
+          </div>
+          <div class="carbon-info-card">
+            <div class="carbon-info-icon" style="background:#FADDDA;color:#C0583A"><i class="ti ti-flame"></i></div>
+            <div class="carbon-info-body">
+              <strong>Why It Matters</strong>
+              <p>Each tonne of CO₂ warms the planet for centuries. Actions you take today ripple into the climate your children and grandchildren will inherit.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TRACKER APP -->
+  <main id="tracker" class="page">
+
+    <!-- TABS -->
+    <div class="tab-nav" role="tablist">
+      <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('estimate',this)">
+        <i class="ti ti-calculator" aria-hidden="true"></i> My footprint
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('actions',this)">
+        <i class="ti ti-list-check" aria-hidden="true"></i> Reduce it
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('insights',this)">
+        <i class="ti ti-chart-dots" aria-hidden="true"></i> Insights
+      </button>
+    </div>
+
+    <!-- TAB: ESTIMATE -->
+    <div id="tab-estimate" class="tab-panel active">
+
+      <!-- Summary cards -->
+      <div class="summary-grid">
+        <div class="summary-card accent">
+          <div class="summary-label">Your total</div>
+          <div class="summary-value" id="total-val">8.4</div>
+          <div class="summary-sub">tonnes CO₂/yr</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">World average</div>
+          <div class="summary-value" style="color:var(--slate)">4.7</div>
+          <div class="summary-sub">tonnes CO₂/yr</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">1.5 °C target</div>
+          <div class="summary-value" style="color:var(--moss)">2.0</div>
+          <div class="summary-sub">tonnes CO₂/yr</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Your rating</div>
+          <div class="summary-value" style="font-size:1.25rem; margin-top:4px">
+            <span class="rating-pill rating-amber" id="rating-pill">Above avg</span>
+          </div>
+          <div class="summary-sub" id="rating-sub">4.2× the target</div>
+        </div>
+      </div>
+
+      <!-- Transport -->
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="input-card-icon icon-transport"><i class="ti ti-car" aria-hidden="true"></i></div>
+          <div>
+            <div class="input-card-title">Transport</div>
+            <div class="input-card-subtitle">Car, flights, and daily commuting</div>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Km driven per week</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="500" step="10" value="150" id="car-km" oninput="recalc()">
+            <span class="slider-val" id="car-km-out">150 km</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Flights per year</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="20" step="1" value="2" id="flights" oninput="recalc()">
+            <span class="slider-val" id="flights-out">2 flights</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Public transit use</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="4" step="1" value="1" id="transit" oninput="recalc()">
+            <span class="slider-val" id="transit-out">Occasional</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Home energy -->
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="input-card-icon icon-home"><i class="ti ti-home" aria-hidden="true"></i></div>
+          <div>
+            <div class="input-card-title">Home energy</div>
+            <div class="input-card-subtitle">Electricity, heating, and renewables</div>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Monthly electricity (kWh)</span>
+          <div class="slider-wrap">
+            <input type="range" min="50" max="1000" step="25" value="300" id="elec" oninput="recalc()">
+            <span class="slider-val" id="elec-out">300 kWh</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Natural gas heating</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="4" step="1" value="2" id="gas" oninput="recalc()">
+            <span class="slider-val" id="gas-out">Moderate</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Renewable energy mix</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="4" step="1" value="0" id="renew" oninput="recalc()">
+            <span class="slider-val" id="renew-out">None</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diet & Consumption -->
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="input-card-icon" style="background:#D4EAF5;color:#1565A8"><i class="ti ti-salad" aria-hidden="true"></i></div>
+          <div>
+            <div class="input-card-title">Diet & consumption</div>
+            <div class="input-card-subtitle">Food choices, clothing, and electronics</div>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Diet type</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="4" step="1" value="2" id="diet" oninput="recalc()">
+            <span class="slider-val" id="diet-out">Omnivore</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">New clothing items/year</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="60" step="5" value="20" id="clothes" oninput="recalc()">
+            <span class="slider-val" id="clothes-out">20 items</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Electronics purchases/year</span>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="10" step="1" value="2" id="electronics" oninput="recalc()">
+            <span class="slider-val" id="electronics-out">2 items</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown bars -->
+      <div class="breakdown-card">
+        <div class="breakdown-title"><i class="ti ti-chart-bar" style="color:var(--leaf)" aria-hidden="true"></i> Emissions breakdown</div>
+        <div id="breakdown-bars"></div>
+      </div>
+
+      <!-- Creator card -->
+      <div class="creator-card">
+        <div class="creator-avatar">AT</div>
+        <div class="creator-info">
+          <div class="creator-label">Created by</div>
+          <div class="creator-name">Ayush Thakur</div>
+          <div class="creator-tagline">Climate tech &amp; sustainability developer</div>
+        </div>
+        <span class="creator-badge"><i class="ti ti-leaf" aria-hidden="true"></i> EcoTrace v1.0</span>
+      </div>
+
+    </div><!-- /tab-estimate -->
+
+    <!-- TAB: ACTIONS -->
+    <div id="tab-actions" class="tab-panel">
+      <div class="actions-intro">
+        <strong>Check off</strong> actions you've already taken or plan to take. Each one shows your estimated yearly CO₂ savings — small changes add up fast.
+      </div>
+      <div id="action-list"></div>
+      <div class="savings-summary">
+        <div class="savings-block">
+          <div class="label">Potential savings</div>
+          <div class="val" id="action-savings">0.0 t</div>
+        </div>
+        <div style="width:1px; background:rgba(255,255,255,.15); align-self:stretch;"></div>
+        <div class="savings-block">
+          <div class="label">Remaining footprint</div>
+          <div class="val" id="action-remaining">8.4 t</div>
+        </div>
+        <div style="width:1px; background:rgba(255,255,255,.15); align-self:stretch;"></div>
+        <div class="savings-block">
+          <div class="label">% reduction</div>
+          <div class="val" id="action-pct">0%</div>
+        </div>
+      </div>
+    </div><!-- /tab-actions -->
+
+    <!-- TAB: INSIGHTS -->
+    <div id="tab-insights" class="tab-panel">
+      <div id="insights-content"></div>
+      <button class="cta-btn" onclick="alert('In a full app, this would open an AI-powered personalised plan based on your inputs.')">
+        <i class="ti ti-sparkles" aria-hidden="true"></i>
+        Get your personalised action plan
+      </button>
+    </div><!-- /tab-insights -->
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Built with real-world data from <strong>IPCC</strong>, <strong>Our World in Data</strong>, and <strong>Project Drawdown</strong>. Estimates are indicative — your actual footprint may vary.</p>
+    <p style="margin-top:.5rem;font-size:12px;opacity:.55;">Designed &amp; developed by <strong style="color:var(--sage)">Ayush Thakur</strong> &nbsp;·&nbsp; EcoTrace v1.0</p>
+  </footer>
+
+  <!-- FLOATING HELP BUTTON -->
+  <button class="help-fab" onclick="openHelp()" aria-label="Open help and support">
+    <i class="ti ti-help" aria-hidden="true"></i>
+  </button>
+  <span class="help-fab-label">Help &amp; Support</span>
+
+  <!-- HELP MODAL -->
+  <div class="modal-overlay" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onclick="if(event.target===this)closeHelp()">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <div class="modal-header-eyebrow">Support centre</div>
+          <h2 class="modal-header-title" id="modal-title">Help &amp; Contact</h2>
+          <div class="modal-header-sub">Frequently asked questions or send us a message</div>
+        </div>
+        <button class="modal-close" onclick="closeHelp()" aria-label="Close help modal">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- FAQ Section -->
+        <div style="font-size:13px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">
+          Common questions
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How are my emissions calculated? <i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">We use emission factors from the IPCC, Project Drawdown, and Our World in Data. Transport uses a standard 210 g CO₂/km for petrol cars; electricity uses an average grid intensity of 230 g/kWh. Results are estimates — your actual footprint varies by region, vehicle type, and lifestyle details.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Is my data saved or shared? <i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">No. All calculations happen locally in your browser. We do not collect, store, or transmit any of your input data. Refreshing the page resets everything.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What is the 1.5 °C target? <i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">The Paris Agreement aims to limit global warming to 1.5 °C above pre-industrial levels. To achieve this, average per-person emissions need to fall to roughly 2 tonnes CO₂ per year by 2050, down from the current world average of ~4.7 tonnes.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I embed or share EcoTrace? <i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">Yes — EcoTrace is free to embed on any website or share as a standalone HTML file. Please credit Ayush Thakur as the creator. Commercial redistribution requires permission.</div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Contact Form -->
+        <div id="contactFormWrap">
+          <div class="contact-form-title">
+            <i class="ti ti-mail" aria-hidden="true"></i> Send us a message
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="help-name">Your name</label>
+              <input class="form-input" type="text" id="help-name" placeholder="Ayush Thakur" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="help-email">Email address</label>
+              <input class="form-input" type="email" id="help-email" placeholder="you@email.com" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="help-topic">Topic</label>
+            <select class="form-select" id="help-topic">
+              <option value="">Choose a topic…</option>
+              <option value="bug">Something isn't working</option>
+              <option value="data">Question about the data / methodology</option>
+              <option value="feature">Feature request or suggestion</option>
+              <option value="embed">Embedding or licensing EcoTrace</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="help-message">Message</label>
+            <textarea class="form-textarea" id="help-message" placeholder="Describe your issue or question in as much detail as you like…"></textarea>
+          </div>
+
+          <div id="form-error" style="display:none;font-size:13px;color:#8B2018;background:#FADDDA;padding:8px 12px;border-radius:var(--radius-md);margin-bottom:.75rem;"></div>
+
+          <button class="submit-btn" onclick="submitHelp()">
+            <i class="ti ti-send" aria-hidden="true"></i> Send message
+          </button>
+        </div>
+
+        <!-- Success state -->
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon"><i class="ti ti-check" aria-hidden="true"></i></div>
+          <h3>Message sent!</h3>
+          <p>Thanks for reaching out. Ayush will get back to you within 1–2 business days at the email you provided.</p>
+          <button onclick="resetForm()" style="margin-top:1rem;padding:8px 20px;border-radius:var(--radius-md);background:var(--mist);border:none;color:var(--leaf);font-size:13px;font-weight:500;cursor:pointer;">Send another message</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const transitLabels  = ['Never','Occasional','Weekly','Most days','Daily'];
+    const gasLabels      = ['None','Low','Moderate','High','Very high'];
+    const renewLabels    = ['None','Some (25%)','Half (50%)','Mostly (75%)','All green'];
+    const dietLabels     = ['Vegan','Vegetarian','Flexitarian','Omnivore','Heavy meat'];
+
+    let state = { total:8.4, transport:0, home:0, food:0, stuff:0 };
+    let actionsDone = {};
+
+    const ACTIONS = [
+      { id:'ev',       name:'Switch to an electric vehicle',     desc:'Or go car-free — use transit, bike, or walk for short trips.',              save:1.80, icon:'ti-car',         cat:'transport' },
+      { id:'flights',  name:'Take one fewer long-haul flight',   desc:'A transatlantic return flight is roughly 1.5 t CO₂e per person.',           save:1.50, icon:'ti-plane',       cat:'transport' },
+      { id:'plant',    name:'Shift toward a plant-rich diet',    desc:'Even reducing meat to 3 days/week cuts food emissions by ~30%.',             save:0.90, icon:'ti-salad',       cat:'diet'      },
+      { id:'solar',    name:'Switch to renewable electricity',   desc:'A green tariff or rooftop solar can essentially eliminate energy emissions.',save:0.80, icon:'ti-sun',         cat:'home'      },
+      { id:'heat',     name:'Install a heat pump',               desc:'Replaces gas boilers with 3–4× more efficient electric heating.',           save:0.70, icon:'ti-temperature', cat:'home'      },
+      { id:'clothes',  name:'Buy secondhand clothing',           desc:'Second-hand and slow fashion cuts textile emissions by up to 80%.',          save:0.40, icon:'ti-shirt',       cat:'stuff'     },
+      { id:'draft',    name:'Improve home insulation',           desc:'Draughtproofing and insulation can cut heating needs by 20–30%.',            save:0.30, icon:'ti-home',        cat:'home'      },
+      { id:'transit2', name:'Use public transit for commuting',  desc:'One car commute switched to train or bus saves ~0.25 t/yr.',                 save:0.25, icon:'ti-train',       cat:'transport' },
+      { id:'food2',    name:'Cut food waste in half',            desc:'About 10% of global emissions come from food that\'s never eaten.',          save:0.20, icon:'ti-trash',       cat:'diet'      },
+    ];
+
+    function recalc() {
+      const carKm       = +document.getElementById('car-km').value;
+      const flights     = +document.getElementById('flights').value;
+      const transit     = +document.getElementById('transit').value;
+      const elec        = +document.getElementById('elec').value;
+      const gas         = +document.getElementById('gas').value;
+      const renew       = +document.getElementById('renew').value;
+      const diet        = +document.getElementById('diet').value;
+      const clothes     = +document.getElementById('clothes').value;
+      const electronics = +document.getElementById('electronics').value;
+
+      document.getElementById('car-km-out').textContent      = carKm + ' km';
+      document.getElementById('flights-out').textContent     = flights + (flights === 1 ? ' flight' : ' flights');
+      document.getElementById('transit-out').textContent     = transitLabels[transit];
+      document.getElementById('elec-out').textContent        = elec + ' kWh';
+      document.getElementById('gas-out').textContent         = gasLabels[gas];
+      document.getElementById('renew-out').textContent       = renewLabels[renew];
+      document.getElementById('diet-out').textContent        = dietLabels[diet];
+      document.getElementById('clothes-out').textContent     = clothes + ' items';
+      document.getElementById('electronics-out').textContent = electronics + (electronics === 1 ? ' item' : ' items');
+
+      const transitFactor = [1,.88,.75,.6,.45][transit];
+      const renewFactor   = [1,.8,.6,.35,.05][renew];
+      const gasFactor     = [0,.4,.9,1.5,2.2][gas];
+      const dietFactor    = [.5,.8,1.1,1.6,2.4][diet];
+
+      const transport = parseFloat((carKm * 52 * 0.00021 * transitFactor + flights * 0.7).toFixed(2));
+      const home      = parseFloat((elec * 12 * 0.00023 * renewFactor + gasFactor).toFixed(2));
+      const food      = parseFloat((dietFactor * 0.9).toFixed(2));
+      const stuff     = parseFloat((clothes * 0.02 + electronics * 0.15 + 0.6).toFixed(2));
+      const total     = parseFloat((transport + home + food + stuff).toFixed(1));
+
+      state = { total, transport, home, food, stuff };
+
+      document.getElementById('total-val').textContent = total.toFixed(1);
+
+      const pill = document.getElementById('rating-pill');
+      const sub  = document.getElementById('rating-sub');
+      pill.className = 'rating-pill';
+      if (total <= 2) {
+        pill.textContent = 'On target';  pill.classList.add('rating-green');
+        sub.textContent = 'At or below the 1.5 °C goal';
+      } else if (total <= 4.7) {
+        pill.textContent = 'Below avg';  pill.classList.add('rating-green');
+        sub.textContent = `${(total/2).toFixed(1)}× the 1.5 °C target`;
+      } else if (total <= 9) {
+        pill.textContent = 'Above avg';  pill.classList.add('rating-amber');
+        sub.textContent = `${(total/2).toFixed(1)}× the 1.5 °C target`;
+      } else {
+        pill.textContent = 'High impact'; pill.classList.add('rating-red');
+        sub.textContent = `${(total/2).toFixed(1)}× the 1.5 °C target`;
+      }
+
+      renderBars(transport, home, food, stuff, total);
+      updateActionsSavings();
+      renderInsights();
+    }
+
+    function renderBars(t, h, f, s, total) {
+      const cats = [
+        { name:'Transport',       val:t, color:'#1B6CA8' },
+        { name:'Home energy',     val:h, color:'#D4860A' },
+        { name:'Food & diet',     val:f, color:'#1565A8' },
+        { name:'Stuff & shopping',val:s, color:'#6B5FBF' },
+      ];
+      const max = total || 1;
+      document.getElementById('breakdown-bars').innerHTML = cats.map(c => `
+        <div class="bar-row">
+          <div class="bar-meta">
+            <strong>${c.name}</strong>
+            <span>${c.val.toFixed(1)} t &nbsp;<span style="color:var(--stone)">(${Math.round(c.val/max*100)}%)</span></span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${Math.min(100, c.val/max*100).toFixed(1)}%; background:${c.color};"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderActionList() {
+      document.getElementById('action-list').innerHTML = ACTIONS.map(a => `
+        <div class="action-card ${actionsDone[a.id] ? 'completed' : ''}" id="acard-${a.id}">
+          <div class="action-check" onclick="toggleAction('${a.id}')" role="checkbox" aria-checked="${!!actionsDone[a.id]}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleAction('${a.id}')">
+            ${actionsDone[a.id] ? '<i class="ti ti-check" aria-hidden="true"></i>' : ''}
+          </div>
+          <div class="action-body">
+            <div class="action-name">${a.name}</div>
+            <div class="action-desc">${a.desc}</div>
+            <span class="action-badge"><i class="ti ti-leaf" aria-hidden="true"></i> Saves ~${a.save.toFixed(2)} t CO₂/yr</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleAction(id) {
+      actionsDone[id] = !actionsDone[id];
+      renderActionList();
+      updateActionsSavings();
+    }
+
+    function updateActionsSavings() {
+      let savings = 0;
+      Object.keys(actionsDone).forEach(id => {
+        if (actionsDone[id]) { const a = ACTIONS.find(x => x.id === id); if (a) savings += a.save; }
+      });
+      savings = Math.min(savings, state.total);
+      const remaining = Math.max(0, state.total - savings);
+      const pct = state.total > 0 ? Math.round(savings / state.total * 100) : 0;
+      document.getElementById('action-savings').textContent   = savings.toFixed(1) + ' t';
+      document.getElementById('action-remaining').textContent = remaining.toFixed(1) + ' t';
+      document.getElementById('action-pct').textContent       = pct + '%';
+    }
+
+    function renderInsights() {
+      const { total, transport, home, food, stuff } = state;
+      const cats = [
+        { name:'transport', val:transport },
+        { name:'home energy', val:home },
+        { name:'food & diet', val:food },
+        { name:'shopping', val:stuff },
+      ];
+      const biggest = [...cats].sort((a,b) => b.val - a.val)[0];
+      const compared = total > 4.7 ? 'above the world average' : 'below the world average';
+      const gap = Math.max(0, total - 2.0).toFixed(1);
+
+      const ins = document.getElementById('insights-content');
+      if (!ins) return;
+      ins.innerHTML = `
+        <div class="insight-card">
+          <div class="insight-icon"><i class="ti ti-target" aria-hidden="true"></i></div>
+          <div class="insight-text">Your footprint is <strong>${total.toFixed(1)} t</strong> CO₂/yr — ${compared} of 4.7 t. To stay within a 1.5 °C pathway, you'd need to reduce by <strong>${gap} t</strong>.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
+          <div class="insight-text">Your biggest source is <strong>${biggest.name}</strong> at ${biggest.val.toFixed(1)} t — that's ${Math.round(biggest.val / total * 100)}% of your total. Addressing this first delivers the most impact per action.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon"><i class="ti ti-bulb" aria-hidden="true"></i></div>
+          <div class="insight-text">${transport > 2 ? 'Flying less or switching from a car to public transit are among the highest-leverage changes available to you.' : food > 1.5 ? 'Your diet is a major driver — even a few meat-free days a week makes a measurable difference.' : 'Your transport and diet footprint are relatively low. Focus next on home energy efficiency and mindful shopping.'}</div>
+        </div>
+
+        <div class="compare-section">
+          <div class="compare-title"><i class="ti ti-users" style="color:var(--leaf)" aria-hidden="true"></i> How you compare</div>
+          ${[
+            { label:'You',          val:total,       color:'#1565A8', you:true  },
+            { label:'World average',val:4.7,         color:'#8AAAC8', you:false },
+            { label:'EU average',   val:8.2,         color:'#B4B2A9', you:false },
+            { label:'1.5 °C target',val:2.0,         color:'#2196D4', you:false },
+          ].map(r => `
+            <div class="compare-row">
+              <div class="compare-meta">
+                <span class="${r.you ? 'you-label' : ''}">${r.label}</span>
+                <span>${r.val.toFixed(1)} t</span>
+              </div>
+              <div class="compare-track">
+                <div class="compare-fill" style="width:${Math.min(100, r.val/14*100).toFixed(1)}%; background:${r.color};"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      document.getElementById('tab-' + tab).classList.add('active');
+      if (btn) { btn.classList.add('active'); btn.setAttribute('aria-selected','true'); }
+      if (tab === 'actions')  renderActionList();
+      if (tab === 'insights') renderInsights();
+    }
+
+    /* ── START TRACKING ───────────────────────────────────────── */
+    function startTracking(tab) {
+      // Update active state on start buttons
+      document.querySelectorAll('.start-btn').forEach(b => b.classList.remove('start-btn-active'));
+      const activeBtn = document.getElementById('sbtn-' + tab);
+      if (activeBtn) activeBtn.classList.add('start-btn-active');
+      // Switch to the chosen tab
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabMap = { estimate: 0, actions: 1, insights: 2 };
+      switchTab(tab, tabBtns[tabMap[tab]]);
+      // Smooth scroll to tracker
+      document.getElementById('tracker').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* ── DARK MODE ────────────────────────────────────────────── */
+    (function() {
+      const saved = localStorage.getItem('ecotrace-theme');
+      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark');
+      }
+    })();
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark');
+      localStorage.setItem('ecotrace-theme', isDark ? 'dark' : 'light');
+    }
+
+    recalc();
+
+    /* ── 3D EARTH GLOBE ──────────────────────────────────────── */
+    (function() {
+      const canvas = document.getElementById('earthCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Earth landmass data: [lon, lat] polygons (simplified GeoJSON-like paths)
+      // Continents as simplified closed lat/lon arrays
+      const continents = [
+        // North America
+        [[-168,72],[-140,72],[-100,74],[-80,73],[-65,50],[-55,47],[-60,44],[-70,41],[-82,24],[-90,20],[-105,20],[-118,30],[-122,37],[-130,55],[-140,58],[-155,60],[-168,64],[-168,72]],
+        // South America
+        [[-80,12],[-62,12],[-50,5],[-35,-5],[-35,-20],[-50,-33],[-65,-42],[-72,-52],[-68,-55],[-60,-45],[-52,-35],[-44,-22],[-35,-8],[-48,-2],[-55,5],[-72,8],[-80,12]],
+        // Europe
+        [[-10,36],[0,38],[10,38],[20,37],[30,36],[36,38],[30,42],[28,44],[25,46],[20,48],[15,50],[10,52],[5,54],[-5,54],[-10,50],[-10,42],[-10,36]],
+        // Africa
+        [[-18,16],[0,16],[10,18],[25,18],[38,20],[42,12],[42,0],[38,-10],[35,-20],[30,-35],[20,-35],[10,-28],[0,-10],[-5,0],[-18,8],[-18,16]],
+        // Asia (simplified)
+        [[26,40],[40,36],[55,26],[70,22],[80,20],[95,10],[105,12],[120,20],[130,32],[135,40],[130,50],[120,55],[110,52],[100,50],[80,60],[60,60],[50,55],[40,50],[30,48],[26,44],[26,40]],
+        // Russia (simplified top)
+        [[30,65],[60,70],[90,72],[120,72],[140,68],[160,68],[170,62],[160,55],[140,52],[130,52],[120,56],[100,60],[80,62],[60,62],[40,60],[30,60],[30,65]],
+        // Australia
+        [[114,-22],[120,-18],[132,-12],[138,-14],[148,-18],[154,-25],[150,-36],[138,-38],[126,-34],[115,-32],[114,-25],[114,-22]],
+        // Greenland
+        [[-55,85],[-20,82],[-18,76],[-30,70],[-48,65],[-60,68],[-68,72],[-55,85]],
+      ];
+
+      let angle = 0;
+      const R = canvas.width / 2;
+
+      function latLonTo3D(lat, lon, rotY) {
+        const phi   = (90 - lat) * Math.PI / 180;
+        const theta = (lon + rotY) * Math.PI / 180;
+        return {
+          x: Math.sin(phi) * Math.cos(theta),
+          y: Math.cos(phi),
+          z: Math.sin(phi) * Math.sin(theta),
+        };
+      }
+
+      function project(p) {
+        return {
+          sx: R + p.x * (R - 4),
+          sy: R - p.y * (R - 4),
+          visible: p.z > 0,
+        };
+      }
+
+      function drawGlobe(rotY) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Deep space gradient background (transparent rim)
+        const bg = ctx.createRadialGradient(R * 0.65, R * 0.35, R * 0.05, R, R, R);
+        bg.addColorStop(0, '#1B6CA8');
+        bg.addColorStop(0.45, '#0D2B4E');
+        bg.addColorStop(1, '#05111F');
+        ctx.beginPath();
+        ctx.arc(R, R, R - 2, 0, Math.PI * 2);
+        ctx.fillStyle = bg;
+        ctx.fill();
+
+        // Ocean grid lines (latitude)
+        ctx.strokeStyle = 'rgba(33,150,212,0.18)';
+        ctx.lineWidth = 0.7;
+        for (let lat = -60; lat <= 60; lat += 30) {
+          ctx.beginPath();
+          let first = true;
+          for (let lon = -180; lon <= 180; lon += 4) {
+            const p3 = latLonTo3D(lat, lon, rotY);
+            if (p3.z <= 0) { first = true; continue; }
+            const pr = project(p3);
+            if (first) { ctx.moveTo(pr.sx, pr.sy); first = false; }
+            else ctx.lineTo(pr.sx, pr.sy);
+          }
+          ctx.stroke();
+        }
+
+        // Ocean grid lines (longitude)
+        for (let lon = -180; lon < 180; lon += 30) {
+          ctx.beginPath();
+          let first = true;
+          for (let lat = -85; lat <= 85; lat += 4) {
+            const p3 = latLonTo3D(lat, lon, rotY);
+            if (p3.z <= 0) { first = true; continue; }
+            const pr = project(p3);
+            if (first) { ctx.moveTo(pr.sx, pr.sy); first = false; }
+            else ctx.lineTo(pr.sx, pr.sy);
+          }
+          ctx.stroke();
+        }
+
+        // Draw continents
+        for (const cont of continents) {
+          // Check if centroid-ish point is visible
+          let visCount = 0;
+          const pts = cont.map(([lon, lat]) => {
+            const p3 = latLonTo3D(lat, lon, rotY);
+            if (p3.z > 0) visCount++;
+            return { p3, pr: project(p3) };
+          });
+          if (visCount < 2) continue;
+
+          ctx.beginPath();
+          let started = false;
+          for (const { p3, pr } of pts) {
+            if (p3.z <= -0.15) { started = false; continue; }
+            if (!started) { ctx.moveTo(pr.sx, pr.sy); started = true; }
+            else ctx.lineTo(pr.sx, pr.sy);
+          }
+          ctx.closePath();
+
+          // Land gradient fill
+          const lg = ctx.createRadialGradient(R * 0.6, R * 0.4, 0, R, R, R);
+          lg.addColorStop(0, 'rgba(45,122,79,0.92)');
+          lg.addColorStop(1, 'rgba(26,71,49,0.88)');
+          ctx.fillStyle = lg;
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(76,175,125,0.45)';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+
+        // Polar ice caps
+        for (const [poleLat, sign] of [[78, 1], [-72, -1]]) {
+          ctx.beginPath();
+          let first = true;
+          for (let lon = -180; lon <= 180; lon += 3) {
+            const p3 = latLonTo3D(poleLat * sign / Math.abs(sign), lon, rotY);
+            if (p3.z <= 0) { first = true; continue; }
+            const pr = project(p3);
+            if (first) { ctx.moveTo(pr.sx, pr.sy); first = false; }
+            else ctx.lineTo(pr.sx, pr.sy);
+          }
+          // Connect to pole
+          const pole3 = latLonTo3D(sign > 0 ? 90 : -90, 0, rotY);
+          if (pole3.z > 0) {
+            const pp = project(pole3);
+            ctx.lineTo(pp.sx, pp.sy);
+          }
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(224,240,255,0.82)';
+          ctx.fill();
+        }
+
+        // Atmosphere glow ring
+        const atm = ctx.createRadialGradient(R, R, R - 6, R, R, R + 2);
+        atm.addColorStop(0, 'rgba(33,150,212,0.32)');
+        atm.addColorStop(0.5, 'rgba(13,43,78,0.12)');
+        atm.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(R, R, R - 1, 0, Math.PI * 2);
+        ctx.strokeStyle = atm;
+        ctx.lineWidth = 8;
+        ctx.stroke();
+
+        // Specular highlight
+        const spec = ctx.createRadialGradient(R * 0.58, R * 0.38, 2, R * 0.65, R * 0.42, R * 0.42);
+        spec.addColorStop(0, 'rgba(255,255,255,0.20)');
+        spec.addColorStop(0.5, 'rgba(255,255,255,0.06)');
+        spec.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(R, R, R - 2, 0, Math.PI * 2);
+        ctx.fillStyle = spec;
+        ctx.fill();
+
+        // Outer border
+        ctx.beginPath();
+        ctx.arc(R, R, R - 2, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(168,212,245,0.22)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      function animate() {
+        angle += 0.25;
+        drawGlobe(angle);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    
+
+    /* ── HELP MODAL ─────────────────────────────────────────── */
+    function openHelp() {
+      document.getElementById('helpModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeHelp() {
+      document.getElementById('helpModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeHelp();
+    });
+
+    function toggleFaq(el) {
+      const isOpen = el.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+      if (!isOpen) el.classList.add('open');
+    }
+
+    function submitHelp() {
+      const name    = document.getElementById('help-name').value.trim();
+      const email   = document.getElementById('help-email').value.trim();
+      const topic   = document.getElementById('help-topic').value;
+      const message = document.getElementById('help-message').value.trim();
+      const errEl   = document.getElementById('form-error');
+
+      errEl.style.display = 'none';
+      if (!name)    { showErr('Please enter your name.'); return; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('Please enter a valid email address.'); return; }
+      if (!topic)   { showErr('Please select a topic.'); return; }
+      if (!message) { showErr('Please write a message before sending.'); return; }
+
+      /* Build mailto link as the delivery mechanism */
+      const subject = encodeURIComponent('[EcoTrace Support] ' + topic);
+      const body    = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nTopic: ' + topic + '\n\n' + message);
+      window.location.href = 'mailto:ayushthakur@example.com?subject=' + subject + '&body=' + body;
+
+      document.getElementById('contactFormWrap').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    }
+
+    function showErr(msg) {
+      const e = document.getElementById('form-error');
+      e.textContent = msg;
+      e.style.display = 'block';
+    }
+
+    function resetForm() {
+      document.getElementById('help-name').value    = '';
+      document.getElementById('help-email').value   = '';
+      document.getElementById('help-topic').value   = '';
+      document.getElementById('help-message').value = '';
+      document.getElementById('form-error').style.display = 'none';
+      document.getElementById('contactFormWrap').style.display = 'block';
+      document.getElementById('formSuccess').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
